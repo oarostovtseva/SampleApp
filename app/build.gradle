@@ -1,17 +1,15 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.orost.sampleapp"
-        minSdkVersion 16
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion Versions.min_sdk
+        targetSdkVersion Versions.target_sdk
+        versionName Versions.versionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -23,13 +21,38 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
-    implementation 'androidx.core:core-ktx:1.2.0-alpha02'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
+    implementation Kotlin.stdlib
+    implementation Kotlin.coroutines
+    implementation Kotlin.coroutines_android
 
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
+    implementation AndroidX.core
+    implementation AndroidX.design
+    implementation AndroidX.constraint_layout
+
+    implementation Koin.core
+    implementation Koin.android
+    implementation Koin.viewmodel
+
+    implementation Lifecycle.viewmodel_ktx
+    implementation Lifecycle.extensions
+    kapt Lifecycle.compiler
+
+    implementation Networking.retrofit
+    implementation Networking.retrofit_converter_moshi
+    implementation Networking.okhttp_logging_interceptor
+    implementation Networking.retrofit_coroutine_adapter
+
+    implementation Timber.timber
+
+    testImplementation Testing.junit_jupiter
+    testImplementation Testing.arch_core
+    testImplementation Testing.mockk
+    testImplementation Koin.test
+
+    androidTestImplementation Testing.espresso_core
+    androidTestImplementation Testing.espresso_contrib
+    androidTestImplementation AndroidX.test_runner
+    androidTestImplementation AndroidX.test_rules
+    androidTestImplementation(Koin.test) { exclude group: 'org.mockito' }
+    androidTestImplementation Testing.mockk_android
 }
