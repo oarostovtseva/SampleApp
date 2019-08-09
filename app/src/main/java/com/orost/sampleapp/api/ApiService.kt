@@ -1,11 +1,11 @@
 package com.orost.sampleapp.api
 
+import com.orost.sampleapp.model.RedditNews
 import kotlinx.coroutines.Deferred
-import retrofit2.http.*
+import retrofit2.http.GET
 
-internal interface ApiService {
+interface ApiService {
 
-    @GET("usersettings/v1")
-    fun getUserSettings(): Deferred<Any>
-
+    @GET("top.json")
+    fun getNews(): Deferred<RedditNews>
 }

@@ -98,3 +98,9 @@ object Timber {
 
     val timber = "com.jakewharton.timber:timber:$timber_version"
 }
+
+object ImageLoading {
+    private const val picasso_version = "2.71828"
+
+    val picasso = "com.squareup.picasso:picasso:$picasso_version"
+}
