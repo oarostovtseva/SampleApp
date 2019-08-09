@@ -43,6 +43,7 @@ dependencies {
     implementation Networking.retrofit_coroutine_adapter
 
     implementation Timber.timber
+    implementation ImageLoading.picasso
 
     testImplementation Testing.junit_jupiter
     testImplementation Testing.arch_core
