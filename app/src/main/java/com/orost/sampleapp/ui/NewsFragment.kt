@@ -25,27 +25,34 @@ class NewsFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_news, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        if (savedInstanceState == null) {
-            newsViewModel.onViewCreated()
-        }
-        super.onViewCreated(view, savedInstanceState)
-    }
-
     override fun initUI(savedInstanceState: Bundle?) {
         news_recycler.adapter = adapter
         news_recycler.layoutManager = LinearLayoutManager(context)
         news_recycler.setHasFixedSize(true)
+
+        swipe_container.setOnRefreshListener { newsViewModel.forceFetchNews() }
+        swipe_container.setColorSchemeResources(
+                android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light
+        )
     }
 
     override fun subscribeToLiveData() {
         newsViewModel.newsLiveData.observe(this, Observer {
+            switchViewsVisibility(it)
             when (it) {
                 is DataState.Success -> {
                     adapter.news = it.data
-                    progress_bar.visibility = View.GONE
                 }
             }
         })
+    }
+
+    private fun switchViewsVisibility(dataState: DataState<Any>) {
+        swipe_container.isRefreshing = dataState is DataState.Loading
+        news_recycler.visibility = if (dataState is DataState.Success) View.VISIBLE else View.GONE
+        error_text.visibility = if (dataState is DataState.Error) View.VISIBLE else View.GONE
     }
 }

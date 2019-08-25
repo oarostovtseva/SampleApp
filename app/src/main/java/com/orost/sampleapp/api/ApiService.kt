@@ -7,5 +7,5 @@ import retrofit2.http.GET
 interface ApiService {
 
     @GET("top.json")
-    fun getNews(): Deferred<RedditNews>
+    fun getNewsAsync(): Deferred<RedditNews>
 }
