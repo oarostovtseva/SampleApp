@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.orost.sampleapp.R
 import com.orost.sampleapp.ui.adapter.NewsAdapter
 import com.orost.sampleapp.utils.DataState
+import com.orost.sampleapp.utils.InfiniteScrollListener
 import com.orost.sampleapp.viewmodel.NewsViewModel
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_news.*
@@ -19,18 +20,28 @@ class NewsFragment : BaseFragment() {
 
     private val newsViewModel: NewsViewModel by viewModel()
     private val picasso: Picasso by inject()
-    private var adapter = NewsAdapter(picasso)
+    private var newsAdapter = NewsAdapter(picasso)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_news, container, false)
     }
 
     override fun initUI(savedInstanceState: Bundle?) {
-        news_recycler.adapter = adapter
-        news_recycler.layoutManager = LinearLayoutManager(context)
-        news_recycler.setHasFixedSize(true)
+        news_recycler.apply {
+            val linearLayoutManager = LinearLayoutManager(context)
+            layoutManager = linearLayoutManager
+            adapter = newsAdapter
+            setHasFixedSize(true)
+            addOnScrollListener(InfiniteScrollListener(linearLayoutManager) {
+                newsViewModel.forceFetchNews()
+            })
+        }
 
-        swipe_container.setOnRefreshListener { newsViewModel.forceFetchNews() }
+        swipe_container.setOnRefreshListener {
+            newsAdapter.news.clear()
+            newsViewModel.after = ""
+            newsViewModel.forceFetchNews()
+        }
         swipe_container.setColorSchemeResources(
                 android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
@@ -40,11 +51,11 @@ class NewsFragment : BaseFragment() {
     }
 
     override fun subscribeToLiveData() {
-        newsViewModel.newsLiveData.observe(this, Observer {
-            switchViewsVisibility(it)
-            when (it) {
+        newsViewModel.newsLiveData.observe(this, Observer { news ->
+            switchViewsVisibility(news)
+            when (news) {
                 is DataState.Success -> {
-                    adapter.news = it.data
+                    newsAdapter.news.addAll(news.data)
                 }
             }
         })
