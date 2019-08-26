@@ -12,8 +12,10 @@ internal class NewsAdapter(val picasso: Picasso) : RecyclerView.Adapter<NewsAdap
 
     var news = mutableListOf<RedditNewsData>()
         set(value) {
+            val prevSize = field.size
+            val newSize = prevSize + value.size
             field = value
-            notifyDataSetChanged()
+            notifyItemRangeInserted(prevSize, newSize)
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {

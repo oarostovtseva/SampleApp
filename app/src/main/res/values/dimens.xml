@@ -2,4 +2,6 @@
 <resources>
     <dimen name="margin_big">24dp</dimen>
     <dimen name="margin_default">16dp</dimen>
+
+    <dimen name="progress_height">60dp</dimen>
 </resources>

@@ -7,6 +7,7 @@ import com.orost.sampleapp.api.ApiService
 import com.orost.sampleapp.model.RedditNewsData
 import com.orost.sampleapp.utils.CoroutineContextProvider
 import com.orost.sampleapp.utils.DataState
+import com.orost.sampleapp.utils.MAX_ITEMS
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -15,13 +16,17 @@ class NewsViewModel(
         private val coroutineContextProvider: CoroutineContextProvider
 ) : ViewModel() {
 
+    var after: String = ""
+
     val newsLiveData by lazy {
         val liveData = MutableLiveData<DataState<MutableList<RedditNewsData>>>()
         fetchNews { liveData.postValue(it) }
         return@lazy liveData
     }
 
-    fun forceFetchNews(){
+    private var newsList = mutableListOf<RedditNewsData>()
+
+    fun forceFetchNews() {
         fetchNews { newsLiveData.postValue(it) }
     }
 
@@ -29,10 +34,12 @@ class NewsViewModel(
         viewModelScope.launch(coroutineContextProvider.io) {
             onLoad.invoke(DataState.Loading)
             try {
-                val request = apiService.getNewsAsync()
+                val request = apiService.getNewsAsync(after, MAX_ITEMS)
                 val response = request.await()
+                after = response.data.after
                 val news = response.data.children.map { it.data }.toMutableList()
-                onLoad.invoke(DataState.Success(news))
+                newsList.addAll(news)
+                onLoad.invoke(DataState.Success(newsList.toMutableList()))
             } catch (e: Exception) {
                 onLoad.invoke(DataState.Error(e))
                 Timber.e(e, "Error while fetching news")
