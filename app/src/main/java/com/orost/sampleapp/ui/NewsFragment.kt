@@ -55,7 +55,7 @@ class NewsFragment : BaseFragment() {
             switchViewsVisibility(news)
             when (news) {
                 is DataState.Success -> {
-                    newsAdapter.news.addAll(news.data)
+                    newsAdapter.news = news.data
                 }
             }
         })
@@ -63,7 +63,8 @@ class NewsFragment : BaseFragment() {
 
     private fun switchViewsVisibility(dataState: DataState<Any>) {
         swipe_container.isRefreshing = dataState is DataState.Loading
-        news_recycler.visibility = if (dataState is DataState.Success) View.VISIBLE else View.GONE
+        news_recycler.visibility = if (dataState is DataState.Success ||
+                dataState is DataState.Loading && newsAdapter.news.size > 0) View.VISIBLE else View.GONE
         error_text.visibility = if (dataState is DataState.Error) View.VISIBLE else View.GONE
     }
 }

@@ -24,7 +24,9 @@ class NewsViewModel(
         return@lazy liveData
     }
 
-    fun forceFetchNews(){
+    private var newsList = mutableListOf<RedditNewsData>()
+
+    fun forceFetchNews() {
         fetchNews { newsLiveData.postValue(it) }
     }
 
@@ -36,7 +38,8 @@ class NewsViewModel(
                 val response = request.await()
                 after = response.data.after
                 val news = response.data.children.map { it.data }.toMutableList()
-                onLoad.invoke(DataState.Success(news))
+                newsList.addAll(news)
+                onLoad.invoke(DataState.Success(newsList.toMutableList()))
             } catch (e: Exception) {
                 onLoad.invoke(DataState.Error(e))
                 Timber.e(e, "Error while fetching news")
