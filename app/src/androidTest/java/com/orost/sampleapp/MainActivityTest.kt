@@ -1,7 +1,6 @@
 package com.orost.sampleapp
 
 import android.content.Intent
-import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -59,8 +58,8 @@ class MainActivityTest {
     fun onLaunchCheckSuccessState() {
         activityRule.launchActivity(Intent())
 
-        Espresso.onView(withId(R.id.news_recycler)).check(matches(isDisplayed()))
-        Espresso.onView(withId(R.id.error_text)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.news_recycler)).check(matches(isDisplayed()))
+        onView(withId(R.id.error_text)).check(matches(not(isDisplayed())))
     }
 
     @Test
@@ -86,8 +85,8 @@ class MainActivityTest {
 
         activityRule.launchActivity(Intent())
 
-        Espresso.onView(withId(R.id.news_recycler)).check(matches(not(isDisplayed())))
-        Espresso.onView(withId(R.id.error_text)).check(matches(isDisplayed()))
+        onView(withId(R.id.news_recycler)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.error_text)).check(matches(isDisplayed()))
     }
 
     private fun getNewsItems(): RedditNews {
@@ -107,7 +106,7 @@ class MainActivityTest {
             thumbnail = "https://images.app.goo.gl/MMg93wPYPAYFw4Fm9",
             url = "https://www.reddit.com/r/funny/comments/dbfsl0/did_i_waste_my_life/"
         )
-        val newsChildrens = listOf(RedditChildren(dataItem1), RedditChildren(dataItem2))
-        return RedditNews(RedditData("item1", "", newsChildrens))
+        val newsChildren = listOf(RedditChildren(dataItem1), RedditChildren(dataItem2))
+        return RedditNews(RedditData("item1", "", newsChildren))
     }
 }
